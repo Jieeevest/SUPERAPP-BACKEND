@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id             Int      @id @default(autoincrement())
+  teamName       String   @unique
+  companyName    String?
+  hqAddress      String?
+  managerName    String?
+  managerEmail   String?  @unique
+  managerPhone   String?
+  imageUrl       String
+  status         String?
+  contracts      TeamContract[]
+  members        Member[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model TeamContract {
+  id                Int      @id @default(autoincrement())
+  contractNumber    String?  @unique
+  teamId            Int
+  activePeriodStart DateTime?
+  activePeriodEnd   DateTime
+  memberQuota       Int
+  packageId         Int
+  status            String?
+  team              Team     @relation(fields: [teamId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Role {
+  id              Int                 @id @default(autoincrement())
+  name            String              
+  description     String?
+  authorizedMenu  Json?
+  status          String?
+  members         Member[]            @relation("RoleToMembers")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+
+model Menu {
+  id             Int      @id @default(autoincrement())
+  name           String   
+  description    String?
+  urlMenu        String?
+  iconMenu       String?
+  category       String?
+  orderingNumber Int?
+  parentMenu     Json?
+  status         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Package {
+  id             Int      @id @default(autoincrement())
+  name           String   
+  description    String?
+  imageUrl       String?
+  selectedMenu   Int[]
+  status         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Member {
+  id              Int                 @id @default(autoincrement())
+  uid             String?             @unique
+  email           String              
+  phoneNumber     String?
+  name            String?
+  password        String?
+  employeeNumber  String?             @unique
+  profileImage    String?             @default("")
+  joinedDate      DateTime?
+  resignedDate    DateTime?
+  homeAddress     String?
+  district        String?
+  subDistrict     String?
+  birthPlace      String?
+  birthDate       DateTime?
+  gender          String?
+  nationality     String?
+  religion        String?
+  maritalStatus   String?             @default("")
+  teamId          Int?
+  team            Team?               @relation(fields: [teamId], references: [id])
+  roleId          Int
+  role            Role                @relation("RoleToMembers", fields: [roleId], references: [id])
+  administration  MemberAdministration? @relation("MemberToAdministration")
+  relatives       MemberRelatives[]   @relation("MemberToRelatives")
+  activityLogs    ActivityLog[]       @relation("MemberToActivityLogs")
+  status          String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+}
+
+model MemberAdministration {
+  id                  Int       @id @default(autoincrement())
+  memberId            Int       @unique
+  taxNumber           String?
+  taxNumberAttachment      String?
+  identityNumber      String?
+  identityNumberAttachment String?
+  member              Member    @relation("MemberToAdministration", fields: [memberId], references: [id])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model MemberRelatives {
+  id                 Int       @id @default(autoincrement())
+  memberId           Int       
+  member             Member    @relation("MemberToRelatives", fields: [memberId], references: [id])
+  fullName           String?
+  relationType       String?
+  phone_number       String?
+  isEmergency        Boolean?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  activity    String
+  timestamp   DateTime @default(now())
+  memberId    Int      @unique
+  member      Member   @relation("MemberToActivityLogs", fields: [memberId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ErrorLog {
+  id          Int      @id @default(autoincrement())
+  error       String
+  stackTrace  String?
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
