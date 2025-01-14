@@ -1,5 +1,5 @@
 {
-  "name": "sirineapp-backend",
+  "name": "superapp-core",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,8 +11,12 @@
     "seed": "ts-node prisma/seed.ts",
     "format": "prettier --write ."
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "fastify",
+    "prisma",
+    "typescript"
+  ],
+  "author": "Noxus",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
