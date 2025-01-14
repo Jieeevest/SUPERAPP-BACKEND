@@ -22,20 +22,28 @@ async function teamRoutes(server: FastifyInstance) {
   server.delete("/:id", { preHandler: [checkSession] }, deleteTeam);
 
   // Team Contracts Routes
-  server.get("/contracts", { preHandler: [checkSession] }, getTeamContracts);
   server.get(
-    "/contracts/:id",
+    "/:id/contracts",
+    { preHandler: [checkSession] },
+    getTeamContracts
+  );
+  server.get(
+    "/:id/contracts/:contractId",
     { preHandler: [checkSession] },
     getTeamContractById
   );
-  server.post("/contracts", { preHandler: [checkSession] }, createTeamContract);
+  server.post(
+    "/:id/contracts",
+    { preHandler: [checkSession] },
+    createTeamContract
+  );
   server.put(
-    "/contracts/:id",
+    "/:id/contracts/:contractId",
     { preHandler: [checkSession] },
     updateTeamContract
   );
   server.delete(
-    "/contracts/:id",
+    "/:id/contracts/:contractId",
     { preHandler: [checkSession] },
     deleteTeamContract
   );

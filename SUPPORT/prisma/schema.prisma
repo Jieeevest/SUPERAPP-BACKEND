@@ -8,19 +8,21 @@ datasource db {
 }
 
 model Team {
-  id             Int      @id @default(autoincrement())
-  teamName       String   @unique
-  companyName    String?
-  hqAddress      String?
-  managerName    String?
-  managerEmail   String?  @unique
-  managerPhone   String?
-  imageUrl       String
-  status         String?
-  contracts      TeamContract[]
-  members        Member[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  teamName            String   @unique
+  companyName         String?
+  hqAddress           String?
+  managerFirstName    String?
+  managerLastName     String?
+  managerFullName     String?
+  managerEmail        String?  @unique
+  managerPhone        String?
+  imageUrl            String
+  status              String?
+  contracts           TeamContract[]
+  members             Member[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model TeamContract {
@@ -79,7 +81,9 @@ model Member {
   uid             String?             @unique
   email           String              
   phoneNumber     String?
-  name            String?
+  firstName       String?
+  lastName        String?
+  fullName        String?
   password        String?
   employeeNumber  String?             @unique
   profileImage    String?             @default("")
@@ -124,7 +128,7 @@ model MemberRelatives {
   member             Member    @relation("MemberToRelatives", fields: [memberId], references: [id])
   fullName           String?
   relationType       String?
-  phone_number       String?
+  phoneNumber        String?
   isEmergency        Boolean?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt

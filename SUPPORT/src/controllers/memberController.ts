@@ -92,7 +92,9 @@ export const getMemberById = async (
         uid: true,
         email: true,
         phoneNumber: true,
-        name: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
         employeeNumber: true,
         profileImage: true,
         joinedDate: true,
@@ -146,7 +148,8 @@ export const createMember = async (
     profileImage,
     email,
     phoneNumber,
-    name,
+    firstName,
+    lastName,
     employeeNumber,
     joinedDate,
     resignedDate,
@@ -170,7 +173,8 @@ export const createMember = async (
     profileImage?: string;
     email: string;
     phoneNumber?: string;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     employeeNumber?: string;
     joinedDate?: Date;
     resignedDate?: Date;
@@ -191,7 +195,7 @@ export const createMember = async (
     identityNumberAttachment?: string;
     relatives?: MemberRelatives[];
   };
-  const generateNumericGameID = (length = 6) =>
+  const generateNumericID = (length = 6) =>
     Array.from({ length }, () => Math.floor(Math.random() * 10)).join("");
   try {
     // Transaction for creating member and member administration
@@ -199,11 +203,13 @@ export const createMember = async (
       // Create the member first
       const newMember = await prisma.member.create({
         data: {
-          uid: generateNumericGameID(9),
+          uid: generateNumericID(9),
           profileImage,
           email,
           phoneNumber,
-          name,
+          firstName,
+          lastName,
+          fullName: `${firstName} ${lastName}`,
           employeeNumber,
           joinedDate,
           resignedDate,
@@ -240,7 +246,7 @@ export const createMember = async (
                 memberId: newMember.id,
                 fullName: relative.fullName,
                 relationType: relative.relationType,
-                phone_number: relative.phone_number,
+                phoneNumber: relative.phoneNumber,
                 isEmergency: relative.isEmergency,
               },
             })
@@ -283,7 +289,8 @@ export const updateMember = async (
   const {
     profileImage,
     phoneNumber,
-    name,
+    firstName,
+    lastName,
     joinedDate,
     resignedDate,
     homeAddress,
@@ -306,7 +313,8 @@ export const updateMember = async (
     profileImage?: string;
     email?: string;
     phoneNumber?: string;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     employeeNumber?: string;
     joinedDate?: Date;
     resignedDate?: Date;
@@ -339,7 +347,9 @@ export const updateMember = async (
         data: {
           profileImage,
           phoneNumber,
-          name,
+          firstName,
+          lastName,
+          fullName: `${firstName} ${lastName}`,
           joinedDate,
           resignedDate,
           homeAddress,
@@ -390,7 +400,7 @@ export const updateMember = async (
                 memberId: memberId,
                 fullName: relative.fullName,
                 relationType: relative.relationType,
-                phone_number: relative.phone_number,
+                phoneNumber: relative.phoneNumber,
                 isEmergency: relative.isEmergency,
               },
             })
@@ -467,7 +477,8 @@ export const verifyMember = async (
   const {
     profileImage,
     phoneNumber,
-    name,
+    firstName,
+    lastName,
     joinedDate,
     resignedDate,
     homeAddress,
@@ -490,7 +501,8 @@ export const verifyMember = async (
     profileImage?: string;
     email?: string;
     phoneNumber?: string;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     employeeNumber?: string;
     joinedDate?: Date;
     resignedDate?: Date;
@@ -523,7 +535,9 @@ export const verifyMember = async (
         data: {
           profileImage,
           phoneNumber,
-          name,
+          firstName,
+          lastName,
+          fullName: `${firstName} ${lastName}`,
           joinedDate,
           resignedDate,
           homeAddress,
@@ -574,7 +588,7 @@ export const verifyMember = async (
                 memberId: memberId,
                 fullName: relative.fullName,
                 relationType: relative.relationType,
-                phone_number: relative.phone_number,
+                phoneNumber: relative.phoneNumber,
                 isEmergency: relative.isEmergency,
               },
             })
