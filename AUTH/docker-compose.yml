@@ -1,0 +1,16 @@
+version: "2"
+services:
+  backoffice-api:
+    image: localhost/backoffice-auth:1.0.0
+    build: .
+    container_name: backoffice-auth
+    restart: unless-stopped
+    volumes:
+      - ./.env:/src/.env
+      - ./src/controllers:/src/controllers
+      - ./src/helpers/:/src/helpers
+      - ./src/middlewares:/src/middlewares
+      - ./src/routes:/src/routes
+      - ./src/server.ts:/src/server.ts
+    ports:
+      - "5002:5002"
