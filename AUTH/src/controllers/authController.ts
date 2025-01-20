@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendResponse } from "../helpers";
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
-const SALT_ROUNDS = 10;
+// const SALT_ROUNDS = 10;
 
 // const WHITELIST_URLS = ["http://localhost:3000", "https://sigap.noxus.com"];
 
@@ -70,7 +70,11 @@ export const getCurrentUser = async (
  * Login
  */
 export const login = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { client_url, email, password } = request.body as {
+  const {
+    client_url,
+    email,
+    // password
+  } = request.body as {
     client_url: string;
     email: string;
     password: string;
@@ -100,13 +104,14 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return sendResponse(reply, 401, {
-        success: false,
-        message: "Invalid email or password",
-      });
-    }
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    // if (!isPasswordValid) {
+    //   return sendResponse(reply, 401, {
+    //     success: false,
+    //     message: "Invalid email or password",
+    //   });
+    // }
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "1d",
@@ -222,7 +227,9 @@ export const resetPassword = async (
   try {
     const decoded = jwt.verify(resetToken, JWT_SECRET) as { id: number };
 
-    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    // const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+    const hashedPassword = newPassword;
 
     await prisma.member.update({
       where: { id: decoded.id },
