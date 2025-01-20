@@ -37,7 +37,8 @@ export const getCurrentUser = async (
         uid: true,
         email: true,
         phoneNumber: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         employeeNumber: true,
         team: true,
         role: true,
@@ -77,14 +78,15 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
 
   try {
     const user = await prisma.member.findUnique({
-      where: { email },
+      where: { email: email },
       select: {
         id: true,
         uid: true,
         email: true,
         password: true,
         phoneNumber: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         employeeNumber: true,
         team: true,
         role: true,
@@ -115,7 +117,8 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       uid: user.uid,
       email: user.email,
       phoneNumber: user.phoneNumber,
-      name: user.name,
+      firsName: user.firstName,
+      lastName: user.lastName,
       employeeNumber: user.employeeNumber,
       team: user.team,
       role: user.role,
@@ -180,7 +183,7 @@ export const forgetPassword = async (
       to: email,
       subject: "Password Reset Request",
       html: `
-        <p>Hello ${member.name},</p>
+        <p>Hello ${member.firstName + " " + member.lastName},</p>
         <p>You requested a password reset. Please click the link below to reset your password:</p>
         <a href="${resetLink}">Reset Password</a>
         <p>The link will expire in 1 hour.</p>
@@ -246,17 +249,19 @@ export const updateProfile = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { id, name, phoneNumber, homeAddress } = request.body as {
-    id?: number;
-    name?: string;
-    phoneNumber?: string;
-    homeAddress?: string;
-  };
+  const { id, firstName, lastName, phoneNumber, homeAddress } =
+    request.body as {
+      id?: number;
+      firstName?: string;
+      lastName?: string;
+      phoneNumber?: string;
+      homeAddress?: string;
+    };
 
   try {
     const updatedUser = await prisma.member.update({
       where: { id },
-      data: { name, phoneNumber, homeAddress },
+      data: { firstName, lastName, phoneNumber, homeAddress },
     });
 
     sendResponse(reply, 200, {

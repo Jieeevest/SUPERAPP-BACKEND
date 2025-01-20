@@ -8,19 +8,21 @@ datasource db {
 }
 
 model Team {
-  id             Int      @id @default(autoincrement())
-  teamName       String   @unique
-  companyName    String?
-  hqAddress      String?
-  managerName    String?
-  managerEmail   String?  @unique
-  managerPhone   String?
-  imageUrl       String
-  status         String?
-  contracts      TeamContract[]
-  members        Member[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  teamName            String   @unique
+  companyName         String?
+  hqAddress           String?
+  managerFirstName    String?
+  managerLastName     String?
+  managerFullName     String?
+  managerEmail        String?  @unique
+  managerPhone        String?
+  imageUrl            String
+  status              String?
+  contracts           TeamContract[]
+  members             Member[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model TeamContract {
@@ -39,7 +41,7 @@ model TeamContract {
 
 model Role {
   id              Int                 @id @default(autoincrement())
-  name            String              @unique
+  name            String              
   description     String?
   authorizedMenu  Json?
   status          String?
@@ -51,7 +53,7 @@ model Role {
 
 model Menu {
   id             Int      @id @default(autoincrement())
-  name           String   @unique
+  name           String   
   description    String?
   urlMenu        String?
   iconMenu       String?
@@ -65,7 +67,7 @@ model Menu {
 
 model Package {
   id             Int      @id @default(autoincrement())
-  name           String   @unique
+  name           String   
   description    String?
   imageUrl       String?
   selectedMenu   Int[]
@@ -79,10 +81,12 @@ model Member {
   uid             String?             @unique
   email           String              @unique
   phoneNumber     String?
-  name            String?
+  firstName       String?
+  lastName        String?
+  fullName        String?
   password        String?
   employeeNumber  String?             @unique
-  profileImage    String?
+  profileImage    String?             @default("")
   joinedDate      DateTime?
   resignedDate    DateTime?
   homeAddress     String?
@@ -93,38 +97,39 @@ model Member {
   gender          String?
   nationality     String?
   religion        String?
-  maritalStatus   String?
+  maritalStatus   String?             @default("")
   teamId          Int?
   team            Team?               @relation(fields: [teamId], references: [id])
   roleId          Int
   role            Role                @relation("RoleToMembers", fields: [roleId], references: [id])
   administration  MemberAdministration? @relation("MemberToAdministration")
-  relatives       MemberRelatives?    @relation("MemberToRelatives")
+  relatives       MemberRelatives[]   @relation("MemberToRelatives")
   activityLogs    ActivityLog[]       @relation("MemberToActivityLogs")
+  status          String?
   createdAt       DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 }
 
 model MemberAdministration {
-  id                 Int       @id @default(autoincrement())
-  memberId           Int       @unique
-  taxNumber          String?
-  cardNumber         String?
-  passportNumber     String?
-  nationalityCardPath String?
-  familyCardPath     String?
-  member             Member    @relation("MemberToAdministration", fields: [memberId], references: [id])
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                  Int       @id @default(autoincrement())
+  memberId            Int       @unique
+  taxNumber           String?
+  taxNumberAttachment      String?
+  identityNumber      String?
+  identityNumberAttachment String?
+  member              Member    @relation("MemberToAdministration", fields: [memberId], references: [id])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 model MemberRelatives {
   id                 Int       @id @default(autoincrement())
-  memberId           Int       @unique
+  memberId           Int       
   member             Member    @relation("MemberToRelatives", fields: [memberId], references: [id])
-  full_name          String?
-  relation           String?
-  phone_number       String?
+  fullName           String?
+  relationType       String?
+  phoneNumber        String?
+  isEmergency        Boolean?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 }
