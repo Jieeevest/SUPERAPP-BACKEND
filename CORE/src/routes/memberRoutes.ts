@@ -9,7 +9,7 @@ import {
 } from "../controllers/memberController";
 import { checkSession } from "../middlewares/checkSession";
 
-export const memberRoutes = async (fastify: FastifyInstance) => {
+async function memberRoutes(fastify: FastifyInstance) {
   fastify.get("/", { preHandler: [checkSession] }, getMembers);
   fastify.get("/:id", { preHandler: [checkSession] }, getMemberById);
   fastify.post("/", { preHandler: [checkSession] }, createMember);
@@ -17,4 +17,6 @@ export const memberRoutes = async (fastify: FastifyInstance) => {
   fastify.delete("/:id", { preHandler: [checkSession] }, deleteMember);
 
   fastify.put("/verify/:id", { preHandler: [checkSession] }, verifyMember);
-};
+}
+
+export default memberRoutes;

@@ -10,7 +10,35 @@ export const getMenus = async (
   reply: FastifyReply
 ) => {
   try {
-    const menus = await prisma.menu.findMany({
+    /** Get filter parameters */
+    // const { name, description } = request.query as {
+    //   name?: string;
+    //   description?: string;
+    // };
+
+    /** Get query parameters */
+    const { page, limit, sortBy, sortOrder } = request.query as {
+      page?: string;
+      limit?: string;
+      sortBy?: string;
+      sortOrder?: string;
+    };
+
+    /** Set pagination parameters */
+    const pageNumber = parseInt(page || "1", 10);
+    const pageSize = parseInt(limit || "10", 10);
+    const orderField = sortBy || "createdAt";
+    const orderDirection = sortOrder?.toLowerCase() === "desc" ? "desc" : "asc";
+
+    /** Set options */
+    const options = {
+      skip: (pageNumber - 1) * pageSize,
+      take: pageSize,
+      orderBy: { [orderField]: orderDirection },
+    };
+
+    /** Filter parameters */
+    const whereConditions: any = {
       where: {
         status: {
           contains: "active",
@@ -18,23 +46,40 @@ export const getMenus = async (
           not: "non-active",
         },
       },
+    };
+
+    // if (name) whereConditions.name = name;
+    // if (description) whereConditions.description = description;
+
+    /** Fetch menus */
+    const menu = await prisma.menu.findMany({
+      ...options,
+      ...whereConditions,
     });
-    if (!menus) {
-      return sendResponse(reply, 404, {
-        success: false,
-        message: "Menus not found",
-        data: null,
-      });
-    }
+
+    /** Count menus */
+    const menuCount = await prisma.menu.count({
+      ...whereConditions,
+    });
+
+    /** Send response */
     return sendResponse(reply, 200, {
       success: true,
-      message: "Menus fetched successfully",
-      data: menus,
+      message: "Menu fetched successfully",
+      data: {
+        menu,
+        totalData: menuCount,
+        pageNumber,
+        pageSize,
+        orderBy: orderField,
+        orderDirection,
+      },
     });
   } catch (error) {
+    /** Send error response */
     return sendResponse(reply, 500, {
       success: false,
-      message: "Error fetching menus",
+      message: "Error fetching roles",
       error: error,
     });
   }
