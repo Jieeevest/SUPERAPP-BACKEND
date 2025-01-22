@@ -6,7 +6,7 @@ services:
     container_name: backoffice-auth
     restart: unless-stopped
     volumes:
-      - ./.env:/src/.env
+      - ./.env:/.env
       - ./src/controllers:/src/controllers
       - ./src/helpers/:/src/helpers
       - ./src/middlewares:/src/middlewares
