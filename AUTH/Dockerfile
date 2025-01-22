@@ -1,27 +1,33 @@
-# Use Node.js as the base image
-FROM node:21-slim
+# Use the official Node 20 base image with a slim variant for small size and efficiency
+FROM --platform=linux/amd64 node:20-alpine
 
-# Set maintainer label
-LABEL maintainer="Noxus"
-
-# Create and set working directory
-RUN mkdir -p /app
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the package files and install dependencies
-COPY ./package.json ./
+# Copy package.json and package-lock.json files into the container
+COPY package*.json ./
 
-# Install application dependencies (including Fastify and Prisma)
-RUN npm install --force
+# Install dependencies
+RUN npm install
 
-# Copy the rest of the application files
+# Update Browserslist database
+RUN npx update-browserslist-db@latest
+
+# Rebuild native Node.js modules
+RUN npm rebuild
+
+# Copy all project files into the container
 COPY . .
 
-# Install Prisma CLI globally for database management
-RUN npm install -g prisma
+# Generate Prisma client (if there is a Prisma schema)
+RUN npx prisma generate
 
-# Expose the port the application will run on
+# Build the Next.js application
+#RUN npm run build
+
+# Specify the port used by Next.js
 EXPOSE 5002
 
-RUN npx prisma generate
+# Run the application
+#CMD ["npm", "run", "start"]
 CMD ["npm", "run", "dev"]

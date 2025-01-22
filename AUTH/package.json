@@ -39,8 +39,8 @@
     "typescript-eslint": "^8.19.0"
   },
   "dependencies": {
+    "@fastify/cors": "^10.0.2",
     "@prisma/client": "^6.1.0",
-    "bcrypt": "^5.1.1",
     "fastify": "^5.2.0",
     "fastify-jwt": "^4.2.0",
     "jsonwebtoken": "^9.0.2",
