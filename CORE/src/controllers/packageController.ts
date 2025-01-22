@@ -1,32 +1,113 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrismaClient } from "@prisma/client";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { sendResponse } from "../helpers";
 
 const prisma = new PrismaClient();
 
+// export const getPackages = async (
+//   request: FastifyRequest,
+//   reply: FastifyReply
+// ) => {
+//   try {
+//     const packages = await prisma.package.findMany({
+//       where: { status: "active" },
+//     });
+
+//     if (packages.length === 0) {
+//       return sendResponse(reply, 404, {
+//         success: false,
+//         message: "Packages not found",
+//         data: [],
+//       });
+//     }
+
+//     return sendResponse(reply, 200, {
+//       success: true,
+//       message: "Packages fetched successfully",
+//       data: packages,
+//     });
+//   } catch (error) {
+//     return sendResponse(reply, 500, {
+//       success: false,
+//       message: "Error fetching packages",
+//       error: error,
+//     });
+//   }
+// };
+
 export const getPackages = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
   try {
+    /** Get filter parameters */
+    // const { name, description } = request.query as {
+    //   name?: string;
+    //   description?: string;
+    // };
+
+    /** Get query parameters */
+    const { page, limit, sortBy, sortOrder } = request.query as {
+      page?: string;
+      limit?: string;
+      sortBy?: string;
+      sortOrder?: string;
+    };
+
+    /** Set pagination parameters */
+    const pageNumber = parseInt(page || "1", 10);
+    const pageSize = parseInt(limit || "10", 10);
+    const orderField = sortBy || "createdAt";
+    const orderDirection = sortOrder?.toLowerCase() === "desc" ? "desc" : "asc";
+
+    /** Set options */
+    const options = {
+      skip: (pageNumber - 1) * pageSize,
+      take: pageSize,
+      orderBy: { [orderField]: orderDirection },
+    };
+
+    /** Filter parameters */
+    const whereConditions: any = {
+      where: {
+        status: {
+          contains: "active",
+          mode: "insensitive",
+          not: "non-active",
+        },
+      },
+    };
+
+    // if (name) whereConditions.name = name;
+    // if (description) whereConditions.description = description;
+
+    /** Fetch packages */
     const packages = await prisma.package.findMany({
-      where: { status: "active" },
+      ...options,
+      ...whereConditions,
     });
 
-    if (packages.length === 0) {
-      return sendResponse(reply, 404, {
-        success: false,
-        message: "Packages not found",
-        data: [],
-      });
-    }
+    /** Count packages */
+    const packageCount = await prisma.package.count({
+      ...whereConditions,
+    });
 
+    /** Send response */
     return sendResponse(reply, 200, {
       success: true,
       message: "Packages fetched successfully",
-      data: packages,
+      data: {
+        packages,
+        totalData: packageCount,
+        pageNumber,
+        pageSize,
+        orderBy: orderField,
+        orderDirection,
+      },
     });
   } catch (error) {
+    /** Send error response */
     return sendResponse(reply, 500, {
       success: false,
       message: "Error fetching packages",

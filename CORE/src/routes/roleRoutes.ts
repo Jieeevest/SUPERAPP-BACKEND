@@ -9,11 +9,7 @@ import {
 import { checkSession } from "../middlewares/checkSession";
 
 async function roleRoutes(server: FastifyInstance) {
-  server.get(
-    "/",
-    // { preHandler: [checkSession] },
-    getRoles
-  );
+  server.get("/", { preHandler: [checkSession] }, getRoles);
   server.get("/:id", { preHandler: [checkSession] }, getRoleById);
   server.post("/", { preHandler: [checkSession] }, createRole);
   server.put("/:id", { preHandler: [checkSession] }, updateRole);

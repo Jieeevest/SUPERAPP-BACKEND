@@ -79,7 +79,7 @@ export const getMenus = async (
     /** Send error response */
     return sendResponse(reply, 500, {
       success: false,
-      message: "Error fetching roles",
+      message: "Error fetching menu",
       error: error,
     });
   }

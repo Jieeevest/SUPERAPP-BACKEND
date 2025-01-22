@@ -9,11 +9,7 @@ import {
 import { checkSession } from "../middlewares/checkSession";
 
 async function menuRoutes(server: FastifyInstance) {
-  server.get(
-    "/",
-    //  { preHandler: [checkSession] },
-    getMenus
-  );
+  server.get("/", { preHandler: [checkSession] }, getMenus);
   server.get("/:id", { preHandler: [checkSession] }, getMenuById);
   server.post("/", { preHandler: [checkSession] }, createMenu);
   server.put("/:id", { preHandler: [checkSession] }, updateMenu);
