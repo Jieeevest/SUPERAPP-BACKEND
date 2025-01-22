@@ -26,7 +26,10 @@ server.register(packageRoutes, { prefix: prefix + "/packages" });
 
 const start = async () => {
   try {
-    await server.listen({ port: (process.env.PORT || 3000) as number });
+    await server.listen({
+      host: "0.0.0.0",
+      port: (process.env.PORT || 5001) as number,
+    });
     console.log(`Server listening on port ${process.env.PORT || 3000}`);
   } catch (err) {
     server.log.error(err);

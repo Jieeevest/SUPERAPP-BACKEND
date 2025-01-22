@@ -1,13 +1,13 @@
 version: "2"
 services:
   backoffice-api:
-    image: localhost/backoffice-auth:1.0.0
+    image: localhost/backoffice-core:1.0.0
     build: .
-    container_name: backoffice-auth
+    container_name: backoffice-core
     restart: unless-stopped
     volumes:
       - .env:/app/env
       - ./src/:/app/src/
       - ./prisma/schema.prisma:/app/prisma/schema.prisma
     ports:
-      - "5002:5002"
+      - "5001:5001"
